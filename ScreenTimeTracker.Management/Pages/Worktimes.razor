@@ -1,0 +1,96 @@
+﻿@page "/Worktimes"
+@using ScreenTimeTracker.Management.Services.Interface
+@using ScreenTimeTracker.Management.Utils
+@using ScreenTimeTracker.Common.Utils
+@using ScreenTimeTracker.Common.DataTypes
+@using ScreenTimeTracker.Common.DataTypes.Results
+@using System.Net.Http.Headers
+@using System.Text
+@using Newtonsoft.Json
+@using ScreenTimeTracker.Common.DataTypes.Models
+@using ScreenTimeTracker.Management.Extensions
+@using System.IO
+
+@inject IHttpClientFactory HttpClientFactory;
+@inject IAuthService AuthService;
+
+<h3>Worktimes</h3>
+
+Times are in UTC
+<div>
+	<MatDatePicker @bind-Value="@From" />
+	<MatDatePicker @bind-Value="@To" />
+	<MatButton OnClick="@GetWorktimes">
+		Get Worktimes
+	</MatButton>
+</div>
+
+<div>
+	@if (_workTimes == null)
+	{
+	<p>Worktimes not loaded yet...</p>
+	}
+	else
+	{
+	<MatTable Items="@_workTimes" class="mat-elevation-z5">
+		<MatTableHeader>
+			<th>Date</th>
+			<th>Total Time</th>
+			<th>Times</th>
+		</MatTableHeader>
+		<MatTableRow>
+			<td>@context.Date.ToShortDateString()</td>
+			<td>@TimeSpan.FromMinutes(context.TotalWorkMinutes).ToString(@"hh\:mm")</td>
+			<td>
+				<MatList>
+					@foreach (var item in context.WorkTimeSets)
+							{
+					<MatListItem>
+						<p>@(item.Start.ToString("HH:mm")) - @(item.End.ToString("HH:mm"))</p>
+					</MatListItem>
+							}
+				</MatList>
+			</td>
+		</MatTableRow>
+	</MatTable>
+	}
+</div>
+
+@code {
+	private DateTime From { get; set; } = DateTime.UtcNow;
+
+	private DateTime To { get; set; } = DateTime.UtcNow;
+
+	private HttpClient _httpClient;
+
+	private List<WorkTimes>? _workTimes = null;
+
+	protected override void OnInitialized()
+	{
+		_httpClient = HttpClientFactory.CreateClient(HttpClients.ScreenTimeTracker);
+
+		base.OnInitialized();
+	}
+
+	private async Task GetWorktimes()
+	{
+		var getTimesModel = new GetWorkTimesModel()
+		{
+			StartDate = From,
+			EndDate = To,
+		};
+
+		var requestMessage = new HttpRequestMessage(HttpMethod.Post, FunctionMap.Get(Function.GetWorkTimes));
+		requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", AuthService.JwtToken);
+		requestMessage.Content = new StringContent(JsonConvert.SerializeObject(getTimesModel), Encoding.Default, "application/json");
+
+		var result = await _httpClient.SendAsync(requestMessage);
+
+		if (result.IsSuccessStatusCode)
+		{
+			_workTimes = await result.GetContentDeserialized<List<WorkTimes>>();
+
+			StateHasChanged();
+		}
+	}
+}

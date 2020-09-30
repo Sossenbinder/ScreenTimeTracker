@@ -1,0 +1,53 @@
+﻿@page "/client"
+@using ScreenTimeTracker.Management.Utils
+@using ScreenTimeTracker.Common.Utils
+@using ScreenTimeTracker.Common.DataTypes
+@using ScreenTimeTracker.Common.DataTypes.Results
+@using ScreenTimeTracker.Management.Extensions
+@using System.Net.Http.Headers
+@using ScreenTimeTracker.Management.Services.Interface
+
+@inject IHttpClientFactory HttpClientFactory;
+@inject IAuthService AuthService;
+
+<h3>Client</h3>
+
+<div>
+	Client link:
+	<a href="https://screentimetracker.blob.core.windows.net/client/ScreenTimeTracker.exe">https://screentimetracker.blob.core.windows.net/client/ScreenTimeTracker.exe</a>
+</div>
+
+<div>
+	Here is your code:
+	<p>@_clientJwtToken</p>
+</div>
+
+@code {
+	private string _clientJwtToken = "";
+
+	protected override async Task OnInitializedAsync()
+	{
+		AuthService.OnUserLogin += async () => await GetToken();
+
+		await base.OnInitializedAsync();
+	}
+
+	private async Task GetToken()
+	{
+		var client = HttpClientFactory.CreateClient(HttpClients.ScreenTimeTracker);
+
+		var requestMessage = new HttpRequestMessage(HttpMethod.Get, FunctionMap.Get(Function.GetClientJwtToken));
+		requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", AuthService.JwtToken);
+
+		var result = await client.SendAsync(requestMessage);
+
+		if (result.IsSuccessStatusCode)
+		{
+			var clientJwtTokenResponse = await result.GetContentDeserialized<GetTokenResult>();
+
+			_clientJwtToken = clientJwtTokenResponse.ClientJwtToken!;
+
+			StateHasChanged();
+		}
+	}
+}

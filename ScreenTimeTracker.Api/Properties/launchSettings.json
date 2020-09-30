@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "ScreenTimeTracker.Api": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "httpPort": 34009,
+      "useSSL": false
+    }
+  }
+}

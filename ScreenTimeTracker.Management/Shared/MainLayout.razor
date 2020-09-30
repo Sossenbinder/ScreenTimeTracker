@@ -1,0 +1,24 @@
+﻿@using ScreenTimeTracker.Management.Services.Interface
+@inherits LayoutComponentBase
+
+@inject IAuthRefreshService AutoRefreshService;
+
+<div class="sidebar">
+	<NavMenu />
+</div>
+
+<div class="main">
+	<div class="content px-4">
+		@Body
+	</div>
+</div>
+
+@code
+{
+	protected override async Task OnInitializedAsync()
+	{
+		await AutoRefreshService.TryRefreshToken();
+
+		await base.OnInitializedAsync();
+	}
+}

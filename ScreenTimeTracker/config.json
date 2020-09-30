@@ -1,0 +1,5 @@
+{
+	"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJVc2VyTmFtZSI6IlNvc3NlbmJpbmRlciJ9.4g_BnWnlStwtP0oOxXAu_Q6-o96f81FSZtNwmihifNM",
+	"checkIntervalInSeconds": "30",
+	"idleTimeoutMinutes": "1"
+}

@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <AzureFunctionsVersion>v3</AzureFunctionsVersion>
+        <LangVersion>8.0</LangVersion>
+        <UserSecretsId>31e5c81e-31c7-422d-8b73-a7cc4e962d30</UserSecretsId>
+        <DockerFastModeProjectMountDirectory>/home/site/wwwroot</DockerFastModeProjectMountDirectory>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Azure.Identity" Version="1.2.3" />
+        <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.1.0" />
+        <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.9" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="3.1.9" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.9" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="2.2.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.8" />
+        <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.36" />
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+        <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.1.0" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\ScreenTimeTracker.Worker\ScreenTimeTracker.Worker.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Update="host.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="local.settings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+        </None>
+    </ItemGroup>
+</Project>
